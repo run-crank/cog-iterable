@@ -1,9 +1,6 @@
 import { BaseStep, Field, StepInterface } from '../../core/base-step';
 import { FieldDefinition, RunStepResponse, Step, StepDefinition } from '../../proto/cog_pb';
 
-import { baseOperators } from '../../client/constants/operators';
-import * as util from '@run-crank/utilities';
-
 /**
  * Note: the class name here becomes this step's stepId.
  @see BaseStep.getId()
@@ -19,7 +16,7 @@ export class DeleteContact extends BaseStep implements StepInterface {
   protected expectedFields: Field[] = [{
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
-    description: 'the email address of the contact',
+    description: "Contact's email address",
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
@@ -28,16 +25,20 @@ export class DeleteContact extends BaseStep implements StepInterface {
     const email: string = stepData.email;
 
     try {
+      const contact = await this.client.getContactByEmail(email);
+      if (!contact.hasOwnProperty('user')) {
+        return this.error('Contact with email %s does not exist', [email]);
+      }
+
       apiRes = await this.client.deleteContactByEmail(email);
-      console.log(apiRes);
       if (apiRes.code == 'Success') {
         return this.pass('Successfully deleted contact');
       } else {
-        return this.error('Failed to delete contact: %s', [apiRes.params.toString()]);
+        return this.fail('Failed to delete contact: %s', [apiRes.params.toString()]);
 
       }
     } catch (e) {
-      return this.error('There was a deleting the Contact: %s', [e.toString()]);
+      return this.error('There was an error deleting the Contact: %s', [e.toString()]);
     }
   }
 

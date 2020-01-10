@@ -1,8 +1,6 @@
 import { BaseStep, Field, StepInterface } from '../../core/base-step';
 import { FieldDefinition, RunStepResponse, Step, StepDefinition } from '../../proto/cog_pb';
-
-import { baseOperators } from '../../client/constants/operators';
-import * as util from '@run-crank/utilities';
+import { isNullOrUndefined } from 'util';
 
 /**
  * Note: the class name here becomes this step's stepId.
@@ -19,20 +17,22 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
   protected expectedFields: Field[] = [{
     field: 'contact',
     type: FieldDefinition.Type.MAP,
-    description: 'Where keys represent contact profile field names as represented in the Iterable API (including email, which is not technically a profile field).',
+    description: 'Where keys represent contact profile field names as represented in the Iterable API (including email).',
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
     let apiRes: any;
     const stepData: any = step.getData().toJavaScript();
     const contact: string = stepData.contact;
+    const contactEmail: string = contact['email'];
+    delete contact['email'];
 
-    if (!contact.hasOwnProperty('email')) {
+    if (isNullOrUndefined(contactEmail)) {
       return this.error('An email address must be provided in order to create an Iterable Contact');
     }
 
     const data = {
-      email: contact['email'],
+      email: contactEmail,
       dataFields: contact,
     };
 
@@ -41,11 +41,10 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
       if (apiRes.code == 'Success') {
         return this.pass('Successfully created contact');
       } else {
-        return this.error('Failed to created contact: %s', [apiRes.params.toString()]);
-
+        return this.error('Failed to create contact: %s', [apiRes.params.toString()]);
       }
     } catch (e) {
-      return this.error('There was a creating the Contact: %s', [e.toString()]);
+      return this.error('There was an error creating the Contact: %s', [e.toString()]);
     }
   }
 

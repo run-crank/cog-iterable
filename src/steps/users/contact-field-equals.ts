@@ -19,12 +19,12 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
   protected expectedFields: Field[] = [{
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
-    description: 'the email address of the contact',
+    description: "Contact's email address",
   },
   {
     field: 'field',
     type: FieldDefinition.Type.STRING,
-    description: 'the API name of the field',
+    description: 'API name of the field',
   },
   {
     field: 'operator',
@@ -55,10 +55,10 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       if (!apiRes.user) {
         // If no results were found, return an error.
         return this.error('No user found for email %s', [email]);
-      } else if (!apiRes.user.dataFields.hasOwnProperty(field)) {
+      } else if (!apiRes.user.hasOwnProperty(field) && !apiRes.user.dataFields.hasOwnProperty(field)) {
         // If the given field does not exist on the user, return an error.
         return this.error('The %s field does not exist on user %s', [field, email]);
-      } else if (this.compare(operator, apiRes.user.dataFields[field], expectedValue)) {
+      } else if (this.compare(operator, apiRes.user.dataFields[field], expectedValue) || this.compare(operator, apiRes.user[field], expectedValue)) {
         // If the value of the field matches expectations, pass.
         return this.pass(util.operatorSuccessMessages[operator], [
           field,
@@ -69,7 +69,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         return this.fail(util.operatorFailMessages[operator], [
           field,
           expectedValue,
-          apiRes.user.dataFields[field],
+          apiRes.user.dataFields[field] || apiRes.user[field],
         ]);
       }
     } catch (e) {

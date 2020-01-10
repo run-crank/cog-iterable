@@ -1,8 +1,8 @@
-import { ContactAwareMixin } from './mixins/contact-aware';
 import * as grpc from 'grpc';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import * as iterableApi from 'node-iterable-api';
+import { ContactAwareMixin } from './mixins';
 
 class ClientWrapper {
 
