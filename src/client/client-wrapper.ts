@@ -1,63 +1,27 @@
 import * as grpc from 'grpc';
-import * as needle from 'needle';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
-import { UserAwareMixin } from './mixins';
+import * as iterableApi from 'node-iterable-api';
+import { ContactAwareMixin } from './mixins';
 
-/**
- * This is a wrapper class around the API client for your Cog. An instance of
- * this class is passed to the constructor of each of your steps, and can be
- * accessed on each step as this.client.
- */
 class ClientWrapper {
 
-  /**
-   * This is an array of field definitions, each corresponding to a field that
-   * your API client requires for authentication. Depending on the underlying
-   * system, this could include bearer tokens, basic auth details, endpoints,
-   * etc.
-   *
-   * If your Cog does not require authentication, set this to an empty array.
-   */
   public static expectedAuthFields: Field[] = [{
-    field: 'userAgent',
+    field: 'apiKey',
     type: FieldDefinition.Type.STRING,
-    description: 'User Agent String',
+    description: 'Api Key',
   }];
 
-  /**
-   * Private instance of the wrapped API client. You will almost certainly want
-   * to swap this out for an API client specific to your Cog's needs.
-   */
   public client: any;
 
-  /**
-   * Constructs an instance of the ClientWwrapper, authenticating the wrapped
-   * client in the process.
-   *
-   * @param auth - An instance of GRPC Metadata for a given RunStep or RunSteps
-   *   call. Will be populated with authentication metadata according to the
-   *   expectedAuthFields array defined above.
-   *
-   * @param clientConstructor - An optional parameter Used only as a means to
-   *   simplify automated testing. Should default to the class/constructor of
-   *   the underlying/wrapped API client.
-   */
-  constructor (auth: grpc.Metadata, clientConstructor = needle) {
-    // Call auth.get() for any field defined in the static expectedAuthFields
-    // array here. The argument passed to get() should match the "field" prop
-    // declared on the definition object above.
-    const uaString: string = auth.get('userAgent').toString();
-    this.client = clientConstructor;
-
-    // Authenticate the underlying client here.
-    this.client.defaults({ user_agent: uaString });
+  constructor (auth: grpc.Metadata, clientConstructor = iterableApi) {
+    this.client = clientConstructor.create(auth.get('apiKey')[0]);
   }
 
 }
 
-interface ClientWrapper extends UserAwareMixin {}
-applyMixins(ClientWrapper, [UserAwareMixin]);
+interface ClientWrapper extends ContactAwareMixin {}
+applyMixins(ClientWrapper, [ContactAwareMixin]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {
