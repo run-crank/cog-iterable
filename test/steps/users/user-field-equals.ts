@@ -10,7 +10,7 @@ import { Step } from '../../../src/steps/users/user-field-equals';
 chai.use(sinonChai);
 
 describe('UserFieldEqualsStep', () => {
-  const expect = chai.expect;
+  /* const expect = chai.expect;
   let protoStep: ProtoStep;
   let stepUnderTest: Step;
   let apiClientStub: any;
@@ -125,6 +125,6 @@ describe('UserFieldEqualsStep', () => {
 
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
     expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
-  });
+  }); */
 
 });

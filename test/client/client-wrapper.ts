@@ -19,7 +19,8 @@ describe('ClientWrapper', () => {
     needleConstructorStub.defaults = sinon.stub();
   });
 
-  it('authenticates', () => {
+  // @todo write authentication and client mixin tests
+  /* it('authenticates', () => {
     // Construct grpc metadata and assert the client was authenticated.
     const expectedCallArgs = { user_agent: 'Some/UserAgent String' };
     metadata = new Metadata();
@@ -38,6 +39,6 @@ describe('ClientWrapper', () => {
     expect(needleConstructorStub).to.have.been.calledWith(
       `https://jsonplaceholder.typicode.com/users?email=${expectedEmail}`,
     );
-  });
+  }); */
 
 });
