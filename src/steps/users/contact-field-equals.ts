@@ -29,6 +29,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
   {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
+    optionality: FieldDefinition.Optionality.OPTIONAL,
     description: 'Check Logic (one of be less than, be greater than, be, contain, not be, or not contain)',
   },
   {
@@ -42,23 +43,18 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     const stepData: any = step.getData().toJavaScript();
     const email: string = stepData.email;
     const field: string = stepData.field;
-    const operator: string = stepData.operator;
+    const operator: string = stepData.operator || 'be';
     const expectedValue: string = stepData.expectedValue;
 
     try {
       apiRes = await this.client.getContactByEmail(email);
-    } catch (e) {
-      return this.error('There was a problem checking the Contact: %s', [e.toString()]);
-    }
-
-    try {
       if (!apiRes.user) {
         // If no results were found, return an error.
         return this.error('No contact found for email %s', [email]);
-      } else if (!apiRes.user.hasOwnProperty(field) && !apiRes.user.dataFields.hasOwnProperty(field)) {
+      } else if (!apiRes.user.hasOwnProperty(field)) {
         // If the given field does not exist on the contact, return an error.
         return this.error('The %s field does not exist on contact %s', [field, email]);
-      } else if (this.compare(operator, apiRes.user.dataFields[field], expectedValue) || this.compare(operator, apiRes.user[field], expectedValue)) {
+      } else if (this.compare(operator, apiRes.user[field], expectedValue)) {
         // If the value of the field matches expectations, pass.
         return this.pass(util.operatorSuccessMessages[operator], [
           field,
@@ -69,7 +65,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         return this.fail(util.operatorFailMessages[operator], [
           field,
           expectedValue,
-          apiRes.user.dataFields[field] || apiRes.user[field],
+          apiRes.user[field],
         ]);
       }
     } catch (e) {

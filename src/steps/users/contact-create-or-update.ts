@@ -41,7 +41,7 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
       if (apiRes.code == 'Success') {
         return this.pass('Successfully created contact');
       } else {
-        return this.error('Failed to create contact: %s', [apiRes.params.toString()]);
+        return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }
     } catch (e) {
       return this.error('There was an error creating the Contact: %s', [e.toString()]);
