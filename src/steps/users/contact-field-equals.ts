@@ -24,17 +24,17 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
   {
     field: 'field',
     type: FieldDefinition.Type.STRING,
-    description: 'API name of the field',
+    description: 'Field name to check',
   },
   {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
-    description: 'the operator to use when comparing expected/actual values (one of be less than, be greater than, be, contain, not be, or not contain)',
+    description: 'Check Logic (one of be less than, be greater than, be, contain, not be, or not contain)',
   },
   {
     field: 'expectedValue',
     type: FieldDefinition.Type.ANYSCALAR,
-    description: 'field value that is expected',
+    description: 'Expected field value',
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
