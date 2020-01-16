@@ -9,7 +9,7 @@ import { Step } from '../../../src/steps/users/contact-field-equals';
 
 chai.use(sinonChai);
 
-describe('UserFieldEqualsStep', () => {
+describe('ContactFieldEqualsStep', () => {
   const expect = chai.expect;
   let protoStep: ProtoStep;
   let stepUnderTest: Step;
@@ -49,7 +49,7 @@ describe('UserFieldEqualsStep', () => {
 
     // Operator field
     const operator: any = fields.filter(f => f.key === 'operator')[0];
-    expect(operator.optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+    expect(operator.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
     expect(operator.type).to.equal(FieldDefinition.Type.STRING);
 
     // Expected Value field
@@ -60,13 +60,13 @@ describe('UserFieldEqualsStep', () => {
 
   it('should respond with pass if API client resolves expected data', async () => {
     // Stub a response that matches expectations.
-    const expectedUser: any = { someField: 'Expected Value' };
+    const expectedUser: any = { dataFields: { someField: 'Expected Value' } };
     apiClientStub.getContactByEmail.resolves({ user: expectedUser });
 
     // Set step data corresponding to expectations
     protoStep.setData(Struct.fromJavaScript({
       field: 'someField',
-      expectedValue: expectedUser.someField,
+      expectedValue: expectedUser.dataFields.someField,
       email: 'anything@example.com',
       operator: 'be',
     }));
@@ -75,25 +75,9 @@ describe('UserFieldEqualsStep', () => {
     expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
   });
 
-  it('should respond with pass if API client resolves expected data when no operator is provided', async () => {
-    // Stub a response that matches expectations.
-    const expectedUser: any = { someField: 'Expected Value' };
-    apiClientStub.getContactByEmail.resolves({ user: expectedUser });
-
-    // Set step data corresponding to expectations
-    protoStep.setData(Struct.fromJavaScript({
-      field: 'someField',
-      expectedValue: expectedUser.someField,
-      email: 'anything@example.com',
-    }));
-
-    const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
-  });
-
   it('should respond with fail if API client does not return expected data', async () => {
     // Stub a response that matches expectations.
-    const expectedUser: any = { someField: 'Expected Value' };
+    const expectedUser: any = { dataFields: { someField: 'Expected Value' } };
     apiClientStub.getContactByEmail.resolves({ user: expectedUser });
 
     // Set step data corresponding to expectations
@@ -126,13 +110,13 @@ describe('UserFieldEqualsStep', () => {
 
   it('should respond with error if property does not exist in contact', async () => {
     // Stub a response that matches expectations.
-    const expectedUser: any = { someField: 'Expected Value' };
+    const expectedUser: any = { dataFields: { someField: 'Expected Value' } };
     apiClientStub.getContactByEmail.resolves({ user: expectedUser });
 
     // Set step data corresponding to expectations
     protoStep.setData(Struct.fromJavaScript({
       field: 'someOtherField',
-      expectedValue: expectedUser.someField,
+      expectedValue: expectedUser.dataFields.someField,
       email: 'anything@example.com',
       operator: 'be',
     }));
@@ -143,13 +127,13 @@ describe('UserFieldEqualsStep', () => {
 
   it('should respond with error when inputting an invalid operator', async () => {
     // Stub a response that matches expectations.
-    const expectedUser: any = { someField: 'Expected Value' };
+    const expectedUser: any = { dataFields: { someField: 'Expected Value' } };
     apiClientStub.getContactByEmail.resolves({ user: expectedUser });
 
     // Set step data corresponding to expectations
     protoStep.setData(Struct.fromJavaScript({
       field: 'someField',
-      expectedValue: expectedUser.someField,
+      expectedValue: expectedUser.dataFields.someField,
       email: 'anything@example.com',
       operator: 'beepboop',
     }));
@@ -160,13 +144,13 @@ describe('UserFieldEqualsStep', () => {
 
   it('should respond with error when inputting an invalid operand for greater/less than operators', async () => {
     // Stub a response that matches expectations.
-    const expectedUser: any = { someField: 'Expected Value' };
+    const expectedUser: any = { dataFields: { someField: 'Expected Value' } };
     apiClientStub.getContactByEmail.resolves({ user: expectedUser });
 
     // Set step data corresponding to expectations
     protoStep.setData(Struct.fromJavaScript({
       field: 'someField',
-      expectedValue: expectedUser.someField,
+      expectedValue: expectedUser.dataFields.someField,
       email: 'anything@example.com',
       operator: 'be greater than',
     }));
