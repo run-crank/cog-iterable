@@ -5,6 +5,7 @@ import 'mocha';
 
 import { ClientWrapper } from '../../src/client/client-wrapper';
 import { Metadata } from 'grpc';
+import { resolve } from 'dns';
 
 chai.use(sinonChai);
 
@@ -36,37 +37,45 @@ describe('ClientWrapper', () => {
     expect(iterableClientConstructorStub.create).to.have.been.calledWith(apiKey);
   });
 
-  // it('createOrUpdateContact', async () => {
-  //   const email = {
-  //     email: 'someEmail',
-  //   };
-  //   // Set up test instance.
-  //   iterableClientStub.users.update.returns(Promise.resolve());
-  //   clientWrapperUnderTest = new ClientWrapper(metadata, iterableClientConstructorStub);
-  //   // Call the method and make assertions.
-  //   await clientWrapperUnderTest.getContactByEmail(email);
-  //   expect(iterableClientStub.users.update).to.have.been.calledWith(email);
-  // });
+  it('createOrUpdateContact', async () => {
+    const contact = {
+      email: 'someEmail',
+    };
+    const expectedResult = {
+      code: 'anyCode',
+    };
+    // Set up test instance.
+    iterableClientStub.users.update.resolves(expectedResult);
+    clientWrapperUnderTest = new ClientWrapper(metadata, iterableClientConstructorStub);
+    // Call the method and make assertions.
+    await clientWrapperUnderTest.createOrUpdateContact(contact);
+    expect(iterableClientStub.users.update).to.have.been.calledWith(contact);
+  });
 
-  // it('getContactByEmail', async () => {
-  //   const email = 'someEmail';
-  //   const expectedResult = {
-  //     email: 'someEmail',
-  //   };
-  //   // Set up test instance.
-  //   clientWrapperUnderTest = new ClientWrapper(metadata, iterableClientConstructorStub);
-  //   // Call the method and make assertions.
-  //   const actualResult = await clientWrapperUnderTest.getContactByEmail(email);
-  //   expect(iterableClientStub.users.get).to.have.been.calledWith(email);
-  //   expect(actualResult).to.equal(expectedResult);
-  // });
+  it('getContactByEmail', async () => {
+    const sampleEmail = 'someEmail';
+    const expectedResult = {
+      email: sampleEmail,
+    };
+    // Set up test instance.
+    iterableClientStub.users.get.resolves(expectedResult);
+    clientWrapperUnderTest = new ClientWrapper(metadata, iterableClientConstructorStub);
+    // Call the method and make assertions.
+    const actualResult = await clientWrapperUnderTest.getContactByEmail(sampleEmail);
+    expect(iterableClientStub.users.get).to.have.been.calledWith(sampleEmail);
+    expect(actualResult).to.equal(expectedResult);
+  });
 
-  // it('deleteContactByEmail', async () => {
-  //   const email = 'someEmail';
-  //   // Set up test instance.
-  //   clientWrapperUnderTest = new ClientWrapper(metadata, iterableClientConstructorStub);
-  //   // Call the method and make assertions.
-  //   await clientWrapperUnderTest.getContactByEmail(email);
-  //   expect(iterableClientStub.users.delete).to.have.been.calledWith(email);
-  // });
+  it('deleteContactByEmail', async () => {
+    const email = 'someEmail';
+    const expectedResult = {
+      code: 'anyCode',
+    };
+    // Set up test instance.
+    iterableClientStub.users.delete.resolves(expectedResult);
+    clientWrapperUnderTest = new ClientWrapper(metadata, iterableClientConstructorStub);
+    // Call the method and make assertions.
+    await clientWrapperUnderTest.deleteContactByEmail(email);
+    expect(iterableClientStub.users.delete).to.have.been.calledWith(email);
+  });
 });
