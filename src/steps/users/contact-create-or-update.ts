@@ -37,9 +37,10 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     };
 
     try {
+      const contact = await this.client.getContactByEmail(contactEmail);
       apiRes = await this.client.createOrUpdateContact(data);
       if (apiRes.code == 'Success') {
-        return this.pass('Successfully created contact');
+        return contact.hasOwnProperty('user') ? this.pass('Successfully updated contact') : this.pass('Successfully created contact');
       } else {
         return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }

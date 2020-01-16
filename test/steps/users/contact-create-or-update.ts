@@ -18,6 +18,7 @@ describe('ContactCreateOrUpdateStep', () => {
   beforeEach(() => {
     // An example of how you can stub/mock API client methods.
     apiClientStub = sinon.stub();
+    apiClientStub.getContactByEmail = sinon.stub();
     apiClientStub.createOrUpdateContact = sinon.stub();
     stepUnderTest = new Step(apiClientStub);
     protoStep = new ProtoStep();
@@ -53,7 +54,22 @@ describe('ContactCreateOrUpdateStep', () => {
         email: 'anything@example.com',
       },
     }));
+    apiClientStub.getContactByEmail.resolves({});
+    const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
+    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
+  });
 
+  it('should respond with pass if contact is updated successfully', async () => {
+    // Stub a response that matches expectations.
+    apiClientStub.createOrUpdateContact.resolves({ code: 'Success' });
+
+    // Set step data corresponding to expectations
+    protoStep.setData(Struct.fromJavaScript({
+      contact: {
+        email: 'anything@example.com',
+      },
+    }));
+    apiClientStub.getContactByEmail.resolves({ user: { email: 'someEmail' } });
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
     expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
   });
@@ -67,7 +83,7 @@ describe('ContactCreateOrUpdateStep', () => {
         email: 'anything@example.com',
       },
     }));
-
+    apiClientStub.getContactByEmail.resolves({});
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
     expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
   });
