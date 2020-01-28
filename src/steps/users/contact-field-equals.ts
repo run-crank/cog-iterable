@@ -14,7 +14,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
 
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on iterable contact (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)';
 
   protected expectedFields: Field[] = [{
     field: 'email',
@@ -69,10 +69,13 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       }
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
-        return this.error('%s. Please provide one of: %s', [e.message, baseOperators]);
+        return this.error('%s Please provide one of: %s', [e.message, baseOperators]);
       }
       if (e instanceof util.InvalidOperandError) {
         return this.error(e.message);
+      }
+      if (e.response.status == 401) {
+        return this.error('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error during validation: %s', [e.message]);
     }

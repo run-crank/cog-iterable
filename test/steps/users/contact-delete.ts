@@ -91,7 +91,11 @@ describe('DeleteContactStep', () => {
 
   it('should respond with error if API client throws error', async () => {
     // Stub a response that throws any exception.
-    apiClientStub.getContactByEmail.throws();
+    apiClientStub.getContactByEmail.throws({
+      response: {
+        status: 'anyStatus',
+      },
+    });
     protoStep.setData(Struct.fromJavaScript({
       email: 'anything@example.com',
     }));
