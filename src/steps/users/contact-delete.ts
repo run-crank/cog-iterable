@@ -38,6 +38,9 @@ export class DeleteContact extends BaseStep implements StepInterface {
 
       }
     } catch (e) {
+      if (e.response.status == 401) {
+        return this.error('Credentials are invalid. Please check them and try again.');
+      }
       return this.error('There was an error deleting the Contact: %s', [e.toString()]);
     }
   }

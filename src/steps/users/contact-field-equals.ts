@@ -68,6 +68,9 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         ]);
       }
     } catch (e) {
+      if (e.response.status == 401) {
+        return this.error('Credentials are invalid. Please check them and try again.');
+      }
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators]);
       }
