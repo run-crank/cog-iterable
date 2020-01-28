@@ -68,7 +68,6 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         ]);
       }
     } catch (e) {
-      console.log(e);
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators]);
       }
