@@ -68,14 +68,15 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         ]);
       }
     } catch (e) {
-      if (e.response.status == 401) {
-        return this.error('Credentials are invalid. Please check them and try again.');
-      }
+      console.log(e);
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators]);
       }
       if (e instanceof util.InvalidOperandError) {
         return this.error(e.message);
+      }
+      if (e.response.status == 401) {
+        return this.error('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error during validation: %s', [e.message]);
     }

@@ -101,7 +101,12 @@ describe('ContactCreateOrUpdateStep', () => {
 
   it('should respond with error if API client throws error', async () => {
     // Stub a response that throws any exception.
-    apiClientStub.createOrUpdateContact.throws();
+    apiClientStub.createOrUpdateContact.throws({
+      response: {
+        status: 'anyStatus',
+      },
+      message: 'anyMessage',
+    });
     protoStep.setData(Struct.fromJavaScript({
       contact: {
         email: 'anything@example.com',

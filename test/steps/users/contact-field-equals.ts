@@ -27,7 +27,7 @@ describe('ContactFieldEqualsStep', () => {
     const stepDef: StepDefinition = stepUnderTest.getDefinition();
     expect(stepDef.getStepId()).to.equal('ContactFieldEquals');
     expect(stepDef.getName()).to.equal('Check a field on an Iterable Contact');
-    expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_]+) field on iterable contact (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)');
+    expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)');
     expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
   });
 
@@ -161,7 +161,12 @@ describe('ContactFieldEqualsStep', () => {
 
   it('should respond with error if API client throws error', async () => {
     // Stub a response that throws any exception.
-    apiClientStub.getContactByEmail.throws();
+    apiClientStub.getContactByEmail.throws({
+      response: {
+        status: 'anyStatus',
+      },
+      message: 'anyMessage',
+    });
     protoStep.setData(Struct.fromJavaScript({
       operator: 'be',
     }));
