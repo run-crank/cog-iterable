@@ -54,7 +54,7 @@ describe('ContactCreateOrUpdateStep', () => {
         email: 'anything@example.com',
       },
     }));
-    apiClientStub.getContactByEmail.resolves({});
+    apiClientStub.getContactByEmail.resolves({ user: { dataFields: { anyField: 'anyValue' } } });
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
     expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
   });
@@ -69,7 +69,7 @@ describe('ContactCreateOrUpdateStep', () => {
         email: 'anything@example.com',
       },
     }));
-    apiClientStub.getContactByEmail.resolves({ user: { email: 'someEmail' } });
+    apiClientStub.getContactByEmail.resolves({ user: { dataFields: { anyField: 'anyValue' } } });
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
     expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
   });

@@ -1,8 +1,9 @@
-import { BaseStep, Field, StepInterface } from '../../core/base-step';
-import { FieldDefinition, RunStepResponse, Step, StepDefinition } from '../../proto/cog_pb';
+import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
+import { FieldDefinition, RunStepResponse, Step, StepDefinition, StepRecord, RecordDefinition } from '../../proto/cog_pb';
 
 import { baseOperators } from '../../client/constants/operators';
 import * as util from '@run-crank/utilities';
+import { isString } from 'util';
 
 /**
  * Note: the class name here becomes this step's stepId.
@@ -37,6 +38,25 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     description: 'Expected field value',
   }];
 
+  protected expectedRecords: ExpectedRecord[] = [{
+    id: 'contact',
+    type: RecordDefinition.Type.KEYVALUE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: "Contact's Email Address",
+    }, {
+      field: 'signupDate',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date/time the Contact was created',
+    }, {
+      field: 'profileUpdatedAt',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date/time the Contact was updated',
+    }],
+    dynamicFields: true,
+  }];
+
   async executeStep(step: Step): Promise<RunStepResponse> {
     let apiRes: any;
     const stepData: any = step.getData().toJavaScript();
@@ -55,10 +75,8 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         return this.error('The %s field does not exist on contact %s', [field, email]);
       } else if (this.compare(operator, apiRes.user.dataFields[field], expectedValue)) {
         // If the value of the field matches expectations, pass.
-        return this.pass(util.operatorSuccessMessages[operator], [
-          field,
-          expectedValue,
-        ]);
+        const contactRecord = this.createRecord(apiRes.user.dataFields);
+        return this.pass(util.operatorSuccessMessages[operator], [field, expectedValue], [contactRecord]);
       } else {
         // If the value of the field does not match expectations, fail.
         return this.fail(util.operatorFailMessages[operator], [
@@ -81,6 +99,16 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     }
   }
 
+  public createRecord(contact): StepRecord {
+    const obj = {};
+    Object.keys(contact).forEach((key: string) => {
+      if (isString(contact[key])) {
+        obj[key] = contact[key];
+      }
+    });
+    const record = this.keyValue('contact', 'Checked Contact', obj);
+    return record;
+  }
 }
 
 // Exports a duplicate of this class, aliased as "Step"
