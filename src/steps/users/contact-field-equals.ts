@@ -3,7 +3,7 @@ import { FieldDefinition, RunStepResponse, Step, StepDefinition, StepRecord, Rec
 
 import { baseOperators } from '../../client/constants/operators';
 import * as util from '@run-crank/utilities';
-import { isString } from 'util';
+import { isObject } from 'util';
 
 /**
  * Note: the class name here becomes this step's stepId.
@@ -101,9 +101,13 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   public createRecord(contact): StepRecord {
     const obj = {};
+    const dateFormat = /[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ [+0-9]+:[0-9]+/;
     Object.keys(contact).forEach((key: string) => {
-      if (isString(contact[key])) {
+      if (!isObject(contact[key])) {
         obj[key] = contact[key];
+      }
+      if (dateFormat.test(obj[key])) {
+        obj[key] = (new Date(obj[key])).toISOString();
       }
     });
     const record = this.keyValue('contact', 'Checked Contact', obj);
