@@ -95,6 +95,7 @@ describe('DeleteContactStep', () => {
       response: {
         status: 'anyStatus',
       },
+      message: 'anyMessage',
     });
     protoStep.setData(Struct.fromJavaScript({
       email: 'anything@example.com',

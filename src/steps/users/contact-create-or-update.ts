@@ -1,6 +1,6 @@
-import { BaseStep, Field, StepInterface } from '../../core/base-step';
-import { FieldDefinition, RunStepResponse, Step, StepDefinition } from '../../proto/cog_pb';
-import { isNullOrUndefined } from 'util';
+import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
+import { FieldDefinition, RunStepResponse, Step, StepDefinition, StepRecord, RecordDefinition } from '../../proto/cog_pb';
+import { isNullOrUndefined, isString } from 'util';
 
 /**
  * Note: the class name here becomes this step's stepId.
@@ -18,6 +18,25 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     field: 'contact',
     type: FieldDefinition.Type.MAP,
     description: 'Where keys represent contact profile field names as represented in the Iterable API (including email).',
+  }];
+
+  protected expectedRecords: ExpectedRecord[] = [{
+    id: 'contact',
+    type: RecordDefinition.Type.KEYVALUE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: "Contact's Email Address",
+    }, {
+      field: 'signupDate',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date/time the Contact was created',
+    }, {
+      field: 'profileUpdatedAt',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date/time the Contact was updated',
+    }],
+    dynamicFields: true,
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
@@ -40,7 +59,10 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
       const contact = await this.client.getContactByEmail(contactEmail);
       apiRes = await this.client.createOrUpdateContact(data);
       if (apiRes.code == 'Success') {
-        return contact.hasOwnProperty('user') ? this.pass('Successfully updated contact') : this.pass('Successfully created contact');
+        const contactExist = contact.hasOwnProperty('user');
+        const record = await this.client.getContactByEmail(contactEmail);
+        const contactRecord = this.createRecord(record.user.dataFields, contactExist);
+        return contactExist ? this.pass('Successfully updated contact', [], [contactRecord]) : this.pass('Successfully created contact', [], [contactRecord]);
       } else {
         return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }
@@ -52,6 +74,16 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     }
   }
 
+  public createRecord(contact, contactExist): StepRecord {
+    const obj = {};
+    Object.keys(contact).forEach((key: string) => {
+      if (isString(contact[key])) {
+        obj[key] = contact[key];
+      }
+    });
+    const record = contactExist ? this.keyValue('contact', 'Updated Contact', obj) : this.keyValue('contact', 'Created Contact', obj);
+    return record;
+  }
 }
 
 // Exports a duplicate of this class, aliased as "Step"
