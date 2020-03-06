@@ -1,5 +1,7 @@
 # Iterable Cog
 
+[![CircleCI](https://circleci.com/gh/run-crank/cog-iterable/tree/master.svg?style=svg)](https://circleci.com/gh/run-crank/cog-iterable/tree/master)
+
 This is a [Crank][what-is-crank] Cog for Iterable, providing
 steps and assertions for you to validate the state and behavior of your
 Iterable instance.
