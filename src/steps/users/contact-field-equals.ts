@@ -79,11 +79,8 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         return this.pass(util.operatorSuccessMessages[operator], [field, expectedValue], [contactRecord]);
       } else {
         // If the value of the field does not match expectations, fail.
-        return this.fail(util.operatorFailMessages[operator], [
-          field,
-          expectedValue,
-          apiRes.user.dataFields[field],
-        ]);
+        const contactRecord = this.createRecord(apiRes.user.dataFields);
+        return this.fail(util.operatorFailMessages[operator], [field, expectedValue, apiRes.user.dataFields[field]], [contactRecord]);
       }
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
