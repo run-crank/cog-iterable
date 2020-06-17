@@ -27,7 +27,7 @@ describe('ContactFieldEqualsStep', () => {
     const stepDef: StepDefinition = stepUnderTest.getDefinition();
     expect(stepDef.getStepId()).to.equal('ContactFieldEquals');
     expect(stepDef.getName()).to.equal('Check a field on an Iterable Contact');
-    expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)');
+    expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain) ?(?<expectedValue>.+)?');
     expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
   });
 
@@ -54,7 +54,7 @@ describe('ContactFieldEqualsStep', () => {
 
     // Expected Value field
     const expectedValue: any = fields.filter(f => f.key === 'expectedValue')[0];
-    expect(expectedValue.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+    expect(expectedValue.optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
     expect(expectedValue.type).to.equal(FieldDefinition.Type.ANYSCALAR);
   });
 

@@ -1,7 +1,9 @@
-import { ClientWrapper } from '../client/client-wrapper';
 import { StepDefinition, FieldDefinition, RecordDefinition, Step as PbStep, RunStepResponse, StepRecord, TableRecord, BinaryRecord } from '../proto/cog_pb';
 import { Struct, Value } from 'google-protobuf/google/protobuf/struct_pb';
 import * as util from '@run-crank/utilities';
+
+// tslint:disable:triple-equals
+// tslint:disable:no-else-after-return
 
 export interface StepInterface {
   getId(): string;
@@ -13,6 +15,7 @@ export interface Field {
   field: string;
   type: FieldDefinition.Type;
   description: string;
+  help?: string;
   optionality?: number;
 }
 
@@ -30,8 +33,9 @@ export abstract class BaseStep {
   protected stepType: StepDefinition.Type;
   protected expectedFields: Field[];
   protected expectedRecords?: ExpectedRecord[];
+  protected stepHelp?: string;
 
-  constructor(protected client: ClientWrapper) { }
+  constructor(protected client) { }
 
   getId(): string {
     return this.constructor.name;
@@ -43,6 +47,10 @@ export abstract class BaseStep {
     stepDefinition.setName(this.stepName);
     stepDefinition.setType(this.stepType);
     stepDefinition.setExpression(this.stepExpression);
+
+    if (this.stepHelp) {
+      stepDefinition.setHelp(this.stepHelp);
+    }
 
     this.expectedFields.forEach((field: Field) => {
       const expectedField = new FieldDefinition();
@@ -77,8 +85,8 @@ export abstract class BaseStep {
     return stepDefinition;
   }
 
-  compare(operator: string, actualValue: string, value: string): boolean {
-    return util.compare(operator, actualValue, value);
+  assert(operator: string, actualValue: string, value: string, field: string): util.AssertionResult {
+    return util.assert(operator, actualValue, value, field);
   }
 
   protected pass(message: string, messageArgs: any[] = [], records: StepRecord[] = []): RunStepResponse {
@@ -149,4 +157,5 @@ export abstract class BaseStep {
     record.setName(name);
     return record;
   }
+
 }
