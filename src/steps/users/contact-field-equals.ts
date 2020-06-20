@@ -3,7 +3,7 @@ import { FieldDefinition, RunStepResponse, Step, StepDefinition, StepRecord, Rec
 
 import { baseOperators } from '../../client/constants/operators';
 import * as util from '@run-crank/utilities';
-import { isObject } from 'util';
+import { isObject, isNullOrUndefined } from 'util';
 
 /**
  * Note: the class name here becomes this step's stepId.
@@ -15,7 +15,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
 
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain) ?(?<expectedValue>.+)?';
 
   protected expectedFields: Field[] = [{
     field: 'email',
@@ -30,12 +30,13 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
   {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
-    description: 'Check Logic (one of be less than, be greater than, be, contain, not be, or not contain)',
+    description: 'Check Logic (be, not be, contain, not contain, be greater than, be less than, be set, not be set, be one of, or not be one of)',
   },
   {
     field: 'expectedValue',
     type: FieldDefinition.Type.ANYSCALAR,
     description: 'Expected field value',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
   protected expectedRecords: ExpectedRecord[] = [{
@@ -65,6 +66,10 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     const operator: string = stepData.operator;
     const expectedValue: string = stepData.expectedValue;
 
+    if (isNullOrUndefined(expectedValue) && !(operator == 'be set' || operator == 'not be set')) {
+      return this.error("The operator '%s' requires an expected value. Please provide one.", [operator]);
+    }
+
     try {
       apiRes = await this.client.getContactByEmail(email);
       if (!apiRes.user) {
@@ -73,15 +78,16 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       } else if (!apiRes.user.dataFields.hasOwnProperty(field)) {
         // If the given field does not exist on the contact, return an error.
         return this.error('The %s field does not exist on contact %s', [field, email]);
-      } else if (this.compare(operator, apiRes.user.dataFields[field], expectedValue)) {
-        // If the value of the field matches expectations, pass.
-        const contactRecord = this.createRecord(apiRes.user.dataFields);
-        return this.pass(util.operatorSuccessMessages[operator], [field, expectedValue], [contactRecord]);
-      } else {
-        // If the value of the field does not match expectations, fail.
-        const contactRecord = this.createRecord(apiRes.user.dataFields);
-        return this.fail(util.operatorFailMessages[operator], [field, expectedValue, apiRes.user.dataFields[field]], [contactRecord]);
       }
+
+      const contactRecord = this.createRecord(apiRes.user.dataFields);
+      const result = this.assert(operator, apiRes.user.dataFields[field], expectedValue, field);
+
+      // If the value of the field matches expectations, pass.
+      // If the value of the field does not match expectations, fail.
+      return result.valid ? this.pass(result.message, [], [contactRecord])
+        : this.fail(result.message, [], [contactRecord]);
+
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators]);
