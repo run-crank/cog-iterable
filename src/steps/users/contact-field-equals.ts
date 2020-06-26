@@ -75,13 +75,14 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       if (!apiRes.user) {
         // If no results were found, return an error.
         return this.error('No contact found for email %s', [email]);
-      } else if (!apiRes.user.dataFields.hasOwnProperty(field)) {
-        // If the given field does not exist on the contact, return an error.
-        return this.error('The %s field does not exist on contact %s', [field, email]);
       }
 
+      // If the field requested does not exist on the actualObject, default to null
+      // so that operators that check emptiness/null e.g. Set Operators will work as expected
+      const actual = apiRes.user.dataFields[field] || null;
+
       const contactRecord = this.createRecord(apiRes.user.dataFields);
-      const result = this.assert(operator, apiRes.user.dataFields[field], expectedValue, field);
+      const result = this.assert(operator, actual, expectedValue, field);
 
       // If the value of the field matches expectations, pass.
       // If the value of the field does not match expectations, fail.
