@@ -1,3 +1,4 @@
+const promiseRetry = require('promise-retry');
 
 export class ContactAwareMixin {
   client: any;
@@ -16,14 +17,22 @@ export class ContactAwareMixin {
     });
   }
 
-  public async getContactByEmail(email): Promise<any> {
+  public async getContactByEmail(email, attemptRetries = false): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        this.client.users.get(email).then((response) => {
-          resolve(response);
-        }).catch((error) => {
-          reject(error);
-        });
+        if (attemptRetries) {
+          promiseRetry((retry: Function) => {
+            return this.client.users.get(email).catch(retry).then((resp) => {
+              // If the response didn't actually resolve a user, retry.
+              if (!resp.user || !resp.user.dataFields) {
+                return retry(Error('Contact may not be available yet due to eventual consistency.'));
+              }
+              return resp;
+            });
+          }).then(resolve);
+        } else {
+          this.client.users.get(email).then(resolve).catch(reject);
+        }
       } catch (e) {
         reject(e);
       }
