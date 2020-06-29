@@ -42,7 +42,7 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
   async executeStep(step: Step): Promise<RunStepResponse> {
     let apiRes: any;
     const stepData: any = step.getData().toJavaScript();
-    const contact: string = stepData.contact;
+    const contact: Record<string, any> = stepData.contact;
     const contactEmail: string = contact['email'];
     delete contact['email'];
 
@@ -56,13 +56,11 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     };
 
     try {
-      const contact = await this.client.getContactByEmail(contactEmail);
       apiRes = await this.client.createOrUpdateContact(data);
       if (apiRes.code == 'Success') {
-        const contactExist = contact.hasOwnProperty('user');
         const record = await this.client.getContactByEmail(contactEmail);
-        const contactRecord = this.createRecord(record.user.dataFields, contactExist);
-        return contactExist ? this.pass('Successfully updated contact', [], [contactRecord]) : this.pass('Successfully created contact', [], [contactRecord]);
+        const contactRecord = this.createRecord(record.user.dataFields);
+        return this.pass('Successfully created or updated contact', [], [contactRecord]);
       } else {
         return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }
@@ -74,14 +72,14 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(contact, contactExist): StepRecord {
+  public createRecord(contact): StepRecord {
     const obj = {};
     Object.keys(contact).forEach((key: string) => {
       if (isString(contact[key])) {
         obj[key] = contact[key];
       }
     });
-    const record = contactExist ? this.keyValue('contact', 'Updated Contact', obj) : this.keyValue('contact', 'Created Contact', obj);
+    const record = this.keyValue('contact', 'Contact', obj);
     return record;
   }
 }
