@@ -65,7 +65,7 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
         return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }
     } catch (e) {
-      if (e.response.status == 401) {
+      if (e && e.response && e.response.status && e.response.status == 401) {
         return this.error('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error creating the Contact: %s', [e.toString()]);
