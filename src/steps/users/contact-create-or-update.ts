@@ -58,14 +58,14 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     try {
       apiRes = await this.client.createOrUpdateContact(data);
       if (apiRes.code == 'Success') {
-        const record = await this.client.getContactByEmail(contactEmail);
+        const record = await this.client.getContactByEmail(contactEmail, true);
         const contactRecord = this.createRecord(record.user.dataFields);
         return this.pass('Successfully created or updated contact', [], [contactRecord]);
       } else {
         return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }
     } catch (e) {
-      if (e.response.status == 401) {
+      if (e && e.response && e.response.status && e.response.status == 401) {
         return this.error('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error creating the Contact: %s', [e.toString()]);
