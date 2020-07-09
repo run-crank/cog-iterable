@@ -49,7 +49,7 @@ Scenario files.
 | --- | --- | --- |
 | **Create or update an Iterable Contact**<br>(`CreateOrUpdateContact`) | `create or update an iterable contact` | - `contact`: Where keys represent contact profile field names as represented in the Iterable API (including email). |
 | **Delete an Iterable Contact**<br>(`DeleteContact`) | `delete the (?<email>.+) iterable contact` | - `email`: Contact's email address |
-| **Check a field on an Iterable Contact**<br>(`ContactFieldEquals`) | `the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be less than\|be greater than\|be\|contain\|not be\|not contain) (?<expectedValue>.+)` | - `email`: Contact's email address <br><br>- `field`: Field name to check <br><br>- `operator`: Check Logic (one of be less than, be greater than, be, contain, not be, or not contain) <br><br>- `expectedValue`: Expected field value |
+| **Check a field on an Iterable Contact**<br>(`ContactFieldEquals`) | `the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be set\|not be set\|be less than\|be greater than\|be one of\|be\|contain\|not be one of\|not be\|not contain) ?(?<expectedValue>.+)?` | - `email`: Contact's email address <br><br>- `field`: Field name to check <br><br>- `operator`: Check Logic (be, not be, contain, not contain, be greater than, be less than, be set, not be set, be one of, or not be one of) <br><br>- `expectedValue`: Expected field value |
 <!-- stepDetailsEnd -->
 
 ## Development and Contributing
