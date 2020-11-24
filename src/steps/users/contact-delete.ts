@@ -27,7 +27,7 @@ export class DeleteContact extends BaseStep implements StepInterface {
     try {
       const contact = await this.client.getContactByEmail(email);
       if (!contact.hasOwnProperty('user')) {
-        return this.error('Contact with email %s does not exist', [email]);
+        return this.fail('Contact with email %s does not exist', [email]);
       }
 
       apiRes = await this.client.deleteContactByEmail(email);
@@ -39,7 +39,7 @@ export class DeleteContact extends BaseStep implements StepInterface {
       }
     } catch (e) {
       if (e.response.status == 401) {
-        return this.error('Credentials are invalid. Please check them and try again.');
+        return this.fail('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error deleting the Contact: %s', [e.toString()]);
     }

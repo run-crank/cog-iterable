@@ -74,7 +74,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       apiRes = await this.client.getContactByEmail(email);
       if (!apiRes.user) {
         // If no results were found, return an error.
-        return this.error('No contact found for email %s', [email]);
+        return this.fail('No contact found for email %s', [email]);
       }
 
       // If the field requested does not exist on the actualObject, default to null
@@ -97,7 +97,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         return this.error(e.message);
       }
       if (e.response.status == 401) {
-        return this.error('Credentials are invalid. Please check them and try again.');
+        return this.fail('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error during validation: %s', [e.message]);
     }
