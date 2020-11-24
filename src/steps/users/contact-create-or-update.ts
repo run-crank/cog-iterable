@@ -47,7 +47,7 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     delete contact['email'];
 
     if (isNullOrUndefined(contactEmail)) {
-      return this.error('An email address must be provided in order to create an Iterable Contact');
+      return this.fail('An email address must be provided in order to create an Iterable Contact');
     }
 
     const data = {
@@ -66,7 +66,7 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
       }
     } catch (e) {
       if (e && e.response && e.response.status && e.response.status == 401) {
-        return this.error('Credentials are invalid. Please check them and try again.');
+        return this.fail('Credentials are invalid. Please check them and try again.');
       }
       return this.error('There was an error creating the Contact: %s', [e.toString()]);
     }
