@@ -34,7 +34,7 @@ export class DeleteContact extends BaseStep implements StepInterface {
       if (apiRes.code == 'Success') {
         return this.pass('Successfully deleted contact');
       } else {
-        return this.fail('Failed to delete contact: %s', [apiRes.params.toString()]);
+        return this.error('Failed to delete contact: %s', [apiRes.params.toString()]);
 
       }
     } catch (e) {
