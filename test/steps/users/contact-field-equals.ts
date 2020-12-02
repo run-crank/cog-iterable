@@ -105,7 +105,7 @@ describe('ContactFieldEqualsStep', () => {
     }));
 
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
   });
 
   it('should respond with error if property does not exist in contact', async () => {
@@ -122,7 +122,7 @@ describe('ContactFieldEqualsStep', () => {
     }));
 
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
   });
 
   it('should respond with error when inputting an invalid operator', async () => {

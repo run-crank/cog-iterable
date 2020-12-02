@@ -73,7 +73,7 @@ describe('DeleteContactStep', () => {
     }));
 
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
+    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
   });
 
   it('should respond with error if contact does not exist', async () => {
@@ -86,7 +86,7 @@ describe('DeleteContactStep', () => {
     }));
 
     const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+    expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
   });
 
   it('should respond with error if API client throws error', async () => {
