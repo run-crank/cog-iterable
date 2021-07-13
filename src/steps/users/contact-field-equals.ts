@@ -15,7 +15,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
 
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain) ?(?<expectedValue>.+)?';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_ ]+) field on iterable contact (?<email>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectedValue>.+)?';
 
   protected expectedFields: Field[] = [{
     field: 'email',
