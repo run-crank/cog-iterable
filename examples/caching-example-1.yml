@@ -1,0 +1,17 @@
+scenario: Iterable Caching Test
+description: >
+  Tests the creation, validation, and deletion of Iterable Contacts.
+
+steps:
+- step: When I create or update an iterable contact
+  data:
+    contact:
+      email: bob@thisisjust.atomatest.com
+      firstName: Bob
+      lastName: Boberton
+- waitFor: 10
+  step: Then the firstName field on iterable contact bob@thisisjust.atomatest.com should be Bob
+- step: Then the lastName field on iterable contact bob@thisisjust.atomatest.com should be Boberton
+- step: Then the email field on iterable contact bob@thisisjust.atomatest.com should be bob@thisisjust.atomatest.com
+- waitFor: 10
+  step: Finally, delete the bob@thisisjust.atomatest.com iterable contact.
