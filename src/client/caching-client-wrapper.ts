@@ -14,6 +14,12 @@ class CachingClientWrapper {
   // -------------------------------------------------------------------
 
   public async getContactByEmail(email, attemptRetries = false) {
+    // If request comes from contact-create-or-update step, then bypass the cache
+    if (attemptRetries) {
+      await this.clearCache();
+      return await this.client.getContactByEmail(email, attemptRetries);
+    }
+
     const cachekey = `Iterable|Contact|${email}|${this.cachePrefix}`;
     const stored = await this.getCache(cachekey);
     if (stored) {

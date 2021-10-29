@@ -11,7 +11,19 @@ steps:
       lastName: Boberton
 - waitFor: 10
   step: Then the firstName field on iterable contact bob@thisisjust.atomatest.com should be Bob
+  failAfter: 60
 - step: Then the lastName field on iterable contact bob@thisisjust.atomatest.com should be Boberton
+- step: Then the email field on iterable contact bob@thisisjust.atomatest.com should be bob@thisisjust.atomatest.com
+- step: When I create or update an iterable contact
+  data:
+    contact:
+      email: bob@thisisjust.atomatest.com
+      firstName: Rob
+      lastName: Roberton
+- waitFor: 10
+  step: Then the firstName field on iterable contact bob@thisisjust.atomatest.com should be Rob
+  failAfter: 60
+- step: Then the lastName field on iterable contact bob@thisisjust.atomatest.com should be Roberton
 - step: Then the email field on iterable contact bob@thisisjust.atomatest.com should be bob@thisisjust.atomatest.com
 - waitFor: 10
   step: Finally, delete the bob@thisisjust.atomatest.com iterable contact.
