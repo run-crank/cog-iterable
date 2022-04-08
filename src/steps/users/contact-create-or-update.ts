@@ -58,9 +58,10 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     try {
       apiRes = await this.client.createOrUpdateContact(data);
       if (apiRes.code == 'Success') {
-        const record = await this.client.getContactByEmail(contactEmail, true);
-        const contactRecord = this.createRecord(record.user.dataFields);
-        return this.pass('Successfully created or updated contact', [], [contactRecord]);
+        const data = await this.client.getContactByEmail(contactEmail, true);
+        const record = this.createRecord(data);
+        const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
+        return this.pass('Successfully created or updated contact', [], [record, orderedRecord]);
       } else {
         return this.fail('Failed to create contact: %s', [apiRes.params.toString()]);
       }
@@ -79,7 +80,18 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
         obj[key] = contact[key];
       }
     });
-    const record = this.keyValue('contact', 'Contact', obj);
+    const record = this.keyValue('contact', 'Created or Updated Contact', obj);
+    return record;
+  }
+
+  public createOrderedRecord(contact, stepOrder = 1): StepRecord {
+    const obj = {};
+    Object.keys(contact).forEach((key: string) => {
+      if (isString(contact[key])) {
+        obj[key] = contact[key];
+      }
+    });
+    const record = this.keyValue(`contact.${stepOrder}`, `Created or Updated Contact from Step ${stepOrder}`, obj);
     return record;
   }
 }
