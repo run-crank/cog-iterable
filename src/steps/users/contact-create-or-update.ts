@@ -75,9 +75,9 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
 
   public createRecord(contact): StepRecord {
     const obj = {};
-    Object.keys(contact).forEach((key: string) => {
-      if (isString(contact[key])) {
-        obj[key] = contact[key];
+    Object.keys(contact.user.dataFields).forEach((key: string) => {
+      if (isString(contact.user.dataFields[key])) {
+        obj[key] = contact.user.dataFields[key];
       }
     });
     const record = this.keyValue('contact', 'Created or Updated Contact', obj);
@@ -86,9 +86,9 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
 
   public createOrderedRecord(contact, stepOrder = 1): StepRecord {
     const obj = {};
-    Object.keys(contact).forEach((key: string) => {
-      if (isString(contact[key])) {
-        obj[key] = contact[key];
+    Object.keys(contact.user.dataFields).forEach((key: string) => {
+      if (isString(contact.user.dataFields[key])) {
+        obj[key] = contact.user.dataFields[key];
       }
     });
     const record = this.keyValue(`contact.${stepOrder}`, `Created or Updated Contact from Step ${stepOrder}`, obj);
