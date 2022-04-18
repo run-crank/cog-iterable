@@ -1,0 +1,17 @@
+scenario: User CRUD Steps
+description: >
+  This scenario proves that contact creation, checking, and deletion steps work
+  as expected.
+
+tokens:
+  test.firstName: Emails
+  test.lastName: Test
+  test.email: testingCached@test.com
+
+steps:
+- step: Given I create or update an iterable contact
+  data:
+    contact:
+      email: '{{test.email}}'
+- step: the email field on iterable contact {{test.email}} should be {{test.email}}
+- step: Finally, delete the {{test.email}} iterable contact
