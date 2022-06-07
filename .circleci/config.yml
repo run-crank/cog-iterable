@@ -26,7 +26,7 @@ executors:
     environment:
       IMAGE_NAME: automatoninc/iterable
     docker:
-      - image: circleci/buildpack-deps:stretch
+      - image: cimg/base:stable
   docker-user:
     environment:
       IMAGE_NAME: automatoninc/iterable
