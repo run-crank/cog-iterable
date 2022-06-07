@@ -67,7 +67,7 @@ export class DiscoverContact extends BaseStep implements StepInterface {
         obj[key] = (new Date(obj[key])).toISOString();
       }
     });
-    const record = this.keyValue('contact', 'Checked Contact', obj);
+    const record = this.keyValue('discoverContact', 'Discovered Contact', obj);
     return record;
   }
 }
