@@ -36,7 +36,7 @@ executors:
 jobs:
   test:
     docker:
-      - image: cimg/node:12
+      - image: cimg/node:12.0
       - image: redis
     steps:
       - checkout
