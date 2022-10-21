@@ -82,7 +82,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       const actual = apiRes.user.dataFields[field] || null;
 
       const contactRecord = this.createRecord(apiRes.user.dataFields);
-      const result = this.assert(operator, actual, expectedValue, field);
+      const result = this.assert(operator, actual, expectedValue, field, stepData['__piiSuppressionLevel']);
 
       // If the value of the field matches expectations, pass.
       // If the value of the field does not match expectations, fail.
