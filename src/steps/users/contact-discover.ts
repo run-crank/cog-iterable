@@ -6,8 +6,10 @@ import { FieldDefinition, RunStepResponse, Step, StepDefinition, StepRecord, Rec
  @see BaseStep.getId()
  */
 export class DiscoverContact extends BaseStep implements StepInterface {
-  protected stepName: string = 'Discover fields on an Iterable Contact';
+  protected stepName: string = 'Discover fields on an Iterable contact';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['discover'];
+  protected targetObject: string = 'Contact';
   protected stepExpression: string = 'discover fields on iterable contact (?<email>.+)';
   protected expectedFields: Field[] = [{
     field: 'email',

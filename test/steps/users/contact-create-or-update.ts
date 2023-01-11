@@ -27,7 +27,7 @@ describe('ContactCreateOrUpdateStep', () => {
   it('should return expected step metadata', () => {
     const stepDef: StepDefinition = stepUnderTest.getDefinition();
     expect(stepDef.getStepId()).to.equal('CreateOrUpdateContact');
-    expect(stepDef.getName()).to.equal('Create or update an Iterable Contact');
+    expect(stepDef.getName()).to.equal('Create or update an Iterable contact');
     expect(stepDef.getExpression()).to.equal('create or update an iterable contact');
     expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
   });
