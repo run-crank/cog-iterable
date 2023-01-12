@@ -17,7 +17,7 @@ export interface Field {
   description: string;
   help?: string;
   optionality?: number;
-  ulksupport?: boolean;
+  bulksupport?: boolean;
 }
 
 export interface ExpectedRecord {
@@ -55,13 +55,13 @@ export abstract class BaseStep {
       stepDefinition.setHelp(this.stepHelp);
     }
 
-    // if (this.actionList) {
-    //   stepDefinition.setActionList(this.actionList);
-    // }
+    if (this.actionList) {
+      stepDefinition.setActionList(this.actionList);
+    }
 
-    // if (this.targetObject) {
-    //   stepDefinition.setTargetObject(this.targetObject);
-    // }
+    if (this.targetObject) {
+      stepDefinition.setTargetObject(this.targetObject);
+    }
 
     this.expectedFields.forEach((field: Field) => {
       const expectedField = new FieldDefinition();
@@ -75,11 +75,11 @@ export abstract class BaseStep {
         expectedField.setOptionality(FieldDefinition.Optionality.REQUIRED);
       }
 
-      // if (field.hasOwnProperty('bulksupport')) {
-      //   expectedField.setBulksupport(field.bulksupport);
-      // } else {
-      //   expectedField.setBulksupport(false);
-      // }
+      if (field.hasOwnProperty('bulksupport')) {
+        expectedField.setBulksupport(field.bulksupport);
+      } else {
+        expectedField.setBulksupport(false);
+      }
 
       stepDefinition.addExpectedFields(expectedField);
     });
