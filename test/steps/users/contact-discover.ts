@@ -26,7 +26,7 @@ describe('DiscoverContact', () => {
   it('should return expected step metadata', () => {
     const stepDef: StepDefinition = stepUnderTest.getDefinition();
     expect(stepDef.getStepId()).to.equal('DiscoverContact');
-    expect(stepDef.getName()).to.equal('Discover fields on an Iterable Contact');
+    expect(stepDef.getName()).to.equal('Discover fields on an Iterable contact');
     expect(stepDef.getExpression()).to.equal('discover fields on iterable contact (?<email>.+)');
     expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
   });

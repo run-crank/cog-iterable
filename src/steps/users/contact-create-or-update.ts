@@ -8,9 +8,11 @@ import { isNullOrUndefined, isString } from 'util';
  */
 export class CreateOrUpdateContact extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Create or update an Iterable Contact';
+  protected stepName: string = 'Create or update an Iterable contact';
 
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['create', 'update'];
+  protected targetObject: string = 'Contact';
 
   protected stepExpression: string = 'create or update an iterable contact';
 

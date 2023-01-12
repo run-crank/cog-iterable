@@ -7,9 +7,11 @@ import { FieldDefinition, RunStepResponse, Step, StepDefinition } from '../../pr
  */
 export class DeleteContact extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Delete an Iterable Contact';
+  protected stepName: string = 'Delete an Iterable contact';
 
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['delete'];
+  protected targetObject: string = 'Contact';
 
   protected stepExpression: string = 'delete the (?<email>.+) iterable contact';
 
