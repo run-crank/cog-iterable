@@ -86,6 +86,25 @@ export class CreateOrUpdateContact extends BaseStep implements StepInterface {
     return record;
   }
 
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = {};
+    Object.keys(data.user.dataFields).forEach((key: string) => {
+      if (isString(data.user.dataFields[key])) {
+        obj[key] = data.user.dataFields[key];
+      }
+    });
+
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:contact', 'Created or Updated Contact', filteredData);
+  }
+
   public createOrderedRecord(contact, stepOrder = 1): StepRecord {
     const obj = {};
     Object.keys(contact.user.dataFields).forEach((key: string) => {
