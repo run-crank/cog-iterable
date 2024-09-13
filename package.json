@@ -4,19 +4,19 @@
   "description": "Iterable Cog for use with Crank",
   "license": "MIT",
   "cog": {
-    "name": "automatoninc/iterable",
+    "name": "stackmoxie/iterable",
     "label": "Iterable",
     "homepage": "",
     "authHelpUrl": ""
   },
   "scripts": {
-    "build-docker": "docker build -t automatoninc/iterable:$npm_package_version -t automatoninc/iterable:latest .",
+    "build-docker": "docker build -t stackmoxie/iterable:$npm_package_version -t stackmoxie/iterable:latest .",
     "build-proto": "scripts/build-proto.sh",
     "build-ts": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "check-engine package.json && ts-node src/core/grpc-server.ts",
     "test": "nyc mocha -r ts-node/register test/*.ts test/**/*.ts test/**/*/*.ts",
-    "version": "crank cog:readme automatoninc/iterable && git add README.md"
+    "version": "crank cog:readme stackmoxie/iterable && git add README.md"
   },
   "nyc": {
     "extension": [
