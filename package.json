@@ -74,7 +74,7 @@
     "minimatch": "^3.1.2",
     "minimist": "^1.2.7",
     "moment": "^2.29.4",
-    "node-iterable-api": "^0.3.3",
+    "node-iterable-api": "^1.2.0",
     "path-parse": "^1.0.7",
     "pathval": "^1.1.1",
     "promise-retry": "^2.0.1",
